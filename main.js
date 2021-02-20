@@ -91,6 +91,32 @@ function render() {
                 line: {
                     width: 0
                 }
+            },
+            {
+                type: "line",
+                xref: "x",
+                yref: "paper",
+                x0: damage_sample_min,
+                x1: damage_sample_min,
+                y0: 0,
+                y1: 1,
+                line: {
+                    color: "#ff0000",
+                    width: 1,
+                }
+            },
+            {
+                type: "line",
+                xref: "x",
+                yref: "paper",
+                x0: damage_sample_max,
+                x1: damage_sample_max,
+                y0: 0,
+                y1: 1,
+                line: {
+                    color: "#ff0000",
+                    width: 1,
+                }
             }
         ]
     };
