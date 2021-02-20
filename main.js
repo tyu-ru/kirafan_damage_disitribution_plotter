@@ -57,7 +57,7 @@ function render() {
             range: [0, (critical_coefficient + 0.05) * damage_factor]
         }
     };
-    Plotly.newPlot('chart-area', data, layout);
+    Plotly.newPlot('chart-area', data, layout, { responsive: true });
 }
 
 function division_array_from_string(str) {
