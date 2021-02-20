@@ -123,7 +123,11 @@ function render() {
         ]
     };
     Plotly.newPlot('chart-area', data, layout, { responsive: true });
-    document.getElementById("probability").textContent = (cumsum[Math.floor(damage_sample_max * x_division / damage_factor)] - cumsum[Math.floor(damage_sample_min * x_division / damage_factor)]) * 100;
+
+    let min_index = Math.min(Math.floor(damage_sample_min * x_division / damage_factor), len);
+    let max_index = Math.min(Math.floor(damage_sample_max * x_division / damage_factor), len);
+    let prob = cumsum[max_index] - cumsum[min_index];
+    document.getElementById("probability").textContent = Math.floor(prob * 1000) / 10;
     register_pick_event();
 }
 
