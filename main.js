@@ -6,6 +6,9 @@ window.onload = () => {
     document.getElementById("damage-division").oninput = render;
     connect_slider_and_number("probability");
     connect_slider_and_number("damage-change");
+
+    document.getElementById("damage-sample-min-pick").onclick = () => { hoge = document.getElementById("damage-sample-min") };
+    document.getElementById("damage-sample-max-pick").onclick = () => { hoge = document.getElementById("damage-sample-max") };
     render();
 };
 
@@ -14,6 +17,16 @@ function connect_slider_and_number(id) {
     let number = document.getElementById(id + "_number")
     slider.oninput = () => { number.value = slider.value; render(); };
     number.oninput = () => { slider.value = number.value; render(); };
+}
+
+var hoge = null;
+function register_pick_event() {
+    document.getElementById("chart-area").on("plotly_click", e => {
+        if (hoge) {
+            hoge.value = Math.floor(e.points[0].x);
+            render();
+        }
+    });
 }
 
 function render() {
@@ -27,11 +40,18 @@ function render() {
 
     const damage_factor = document.getElementById("damage").value / document.getElementById("damage-type").value;
 
+    let damage_sample_min = document.getElementById("damage-sample-min").value;
+    let damage_sample_max = document.getElementById("damage-sample-max").value;
+
     let x = Array(x_division * max_coeffient).fill().map((_, i) => i / x_division * damage_factor);
     let data = [];
+    let cumsum = Array(x_division * max_coeffient + 1).fill(0);
     function add_data(fn, fil) {
         let st = performance.now();
         let y = fn(x_division, max_coeffient, damage_division, critical_probability, critical_coefficient);
+        for (let i = 0; i < x_division * max_coeffient; ++i) {
+            cumsum[i + 1] = cumsum[i] + y[i];
+        }
         let en = performance.now();
         console.log(fn.name + ":" + (en - st) + "ms");
         data.push({
@@ -55,9 +75,27 @@ function render() {
             fixedrange: f,
             dtick: 0.1 * damage_factor,
             range: [0, (critical_coefficient + 0.05) * damage_factor]
-        }
+        },
+        shapes: [
+            {
+                type: "rect",
+                xref: "x",
+                yref: 'paper',
+                x0: damage_sample_min,
+                x1: damage_sample_max,
+                y0: 0,
+                y1: 1,
+                fillcolor: "#d3d3d3",
+                opacity: 0.2,
+                line: {
+                    width: 0
+                }
+            }
+        ]
     };
     Plotly.newPlot('chart-area', data, layout, { responsive: true });
+    document.getElementById("probability").textContent = (cumsum[Math.floor(damage_sample_max * x_division / damage_factor)] - cumsum[Math.floor(damage_sample_min * x_division / damage_factor)]) * 100;
+    register_pick_event();
 }
 
 function division_array_from_string(str) {
