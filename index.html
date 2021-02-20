@@ -15,26 +15,26 @@
     <noscript>Pls enable javascript</noscript>
     <div>
         Attack Division
-        <input id="damage-division" size=5em>
+        <input id="damage-division" size=5em value="1 1 1 1 1">
         Critical Probability
-        <input id="probability_slider" type="range" step=1 min=0 max=100>
-        <input id="probability_number" type="number" size=2em step=1 min=0 max=100>%
+        <input id="probability_slider" type="range" step=1 min=0 max=100 value=20>
+        <input id="probability_number" type="number" size=2em step=1 min=0 max=100 value=20>%
         Critical Damage Change
-        <input id="damage-change_slider" type="range" size=2em step=1 min=-1 max=100>
-        <input id="damage-change_number" type="number" size=2em step=1 min=-1 max=100> %
+        <input id="damage-change_slider" type="range" size=2em step=1 min=-1 max=100 value=0>
+        <input id="damage-change_number" type="number" size=2em step=1 min=-1 max=100 value=0> %
     </div>
     <div>
         Damege
-        <input id="damage" type="number" size=5em min=1>
+        <input id="damage" type="number" size=5em min=1 value=10000>
         <select id="damage-type">
             <option value=1>maximum</option>
             <option value=0.925>expected</option>
         </select>
         Damage sample
-        <input id="damage-sample-min" type="number" size=5em min=1 step=any>
+        <input id="damage-sample-min" type="number" size=5em min=1 step=any value=10000>
         <button id="damage-sample-min-pick" type="button">pick</button>
         ~
-        <input id="damage-sample-max" type="number" size=5em min=1 step=any>
+        <input id="damage-sample-max" type="number" size=5em min=1 step=any value=15000>
         <button id="damage-sample-max-pick" type="button">pick</button>
         <span id="probability"></span>%
     </div>
