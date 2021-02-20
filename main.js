@@ -7,8 +7,21 @@ window.onload = () => {
     connect_slider_and_number("probability");
     connect_slider_and_number("damage-change");
 
-    document.getElementById("damage-sample-min-pick").onclick = () => { hoge = document.getElementById("damage-sample-min") };
-    document.getElementById("damage-sample-max-pick").onclick = () => { hoge = document.getElementById("damage-sample-max") };
+    document.getElementById("damage-sample-min").oninput = damage_sample_clamp;
+    document.getElementById("damage-sample-max").oninput = damage_sample_clamp;
+    document.getElementById("damage").oninput = damage_sample_clamp;
+    document.getElementById("damage-type").onchange = damage_sample_clamp;
+
+    document.getElementById("Plotly-static-mode").onchange = render;
+
+    document.getElementById("damage-sample-min-pick").onclick = () => {
+        pick_target = document.getElementById("damage-sample-min");
+        render();
+    };
+    document.getElementById("damage-sample-max-pick").onclick = () => {
+        pick_target = document.getElementById("damage-sample-max");
+        render();
+    };
     render();
 };
 
@@ -19,12 +32,22 @@ function connect_slider_and_number(id) {
     number.oninput = () => { slider.value = number.value; render(); };
 }
 
-var hoge = null;
+function damage_sample_clamp() {
+    let min = document.getElementById("damage-sample-min");
+    let max = document.getElementById("damage-sample-max");
+    let damage = document.getElementById("damage").value * 3.5;
+    min.value = Math.min(min.value, damage);
+    max.value = Math.min(max.value, damage);
+    render();
+}
+
+var pick_target = null;
 function register_pick_event() {
     document.getElementById("chart-area").on("plotly_click", e => {
-        if (hoge) {
-            hoge.value = Math.floor(e.points[0].x);
+        if (pick_target) {
+            pick_target.value = Math.round(e.points[0].x * 10) / 10;
             render();
+            pick_target = null;
         }
     });
 }
