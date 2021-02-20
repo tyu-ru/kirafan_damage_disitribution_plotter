@@ -44,6 +44,8 @@ function render() {
     let damage_sample_min = document.getElementById("damage-sample-min").value;
     let damage_sample_max = document.getElementById("damage-sample-max").value;
 
+    const static_mode = document.getElementById("Plotly-static-mode").checked;
+
     let x = Array(data_len).fill().map((_, i) => i / x_division * damage_factor);
     let data = [];
     let cumsum = Array(data_len + 1).fill(0);
@@ -66,14 +68,14 @@ function render() {
     // add_data(montecarlo, false);
     // add_data(convolution, true);
     add_data(fft_convolution, true);
-    let f = document.getElementById("Plotly-static-mode").checked;
+
     let layout = {
         title: 'Damage Dsitribution',
         showlegend: false,
-        yaxis: { title: "Damage", fixedrange: f },
+        yaxis: { title: "Damage", fixedrange: static_mode },
         xaxis: {
             title: "Probability Density",
-            fixedrange: f,
+            fixedrange: static_mode,
             dtick: 0.1 * damage_factor,
             range: [0, (critical_coefficient + 0.05) * damage_factor]
         },
