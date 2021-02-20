@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <title>Damage Distribution Plotter</title>
-    <!-- Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="main.js"></script>
 </head>
@@ -21,7 +20,7 @@
         <input id="probability_slider" type="range" step=1 min=0 max=100>
         <input id="probability_number" type="number" size=2em step=1 min=0 max=100>%
         Critical Damage Change
-        <input id="damage-change_slider" type="range" size=2em step=1 min=-1 max=100> %
+        <input id="damage-change_slider" type="range" size=2em step=1 min=-1 max=100>
         <input id="damage-change_number" type="number" size=2em step=1 min=-1 max=100> %
     </div>
     <div>
@@ -33,10 +32,10 @@
         </select>
         Damage sample
         <input id="damage-sample-min" type="number" size=5em min=1 step=any>
-        <button id="damage-sample-min-pick" type="button">pick from plot</button>
+        <button id="damage-sample-min-pick" type="button">pick</button>
         ~
         <input id="damage-sample-max" type="number" size=5em min=1 step=any>
-        <button id="damage-sample-max-pick" type="button">pick from plot</button>
+        <button id="damage-sample-max-pick" type="button">pick</button>
         <span id="probability"></span>%
     </div>
     <div>Plotly static mode<input id="Plotly-static-mode" type=checkbox checked="checked"></div>

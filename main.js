@@ -103,6 +103,7 @@ function render() {
         x: x,
         y: distribution.map(e => e * param.x_division / param.damage_factor),
         type: "line",
+        name: "fft_convolution",
         fill: "tozeroy",
     });
 
