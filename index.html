@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <title>Damage Distribution Plotter</title>
-
+    <!-- Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="main.js"></script>
 </head>
@@ -24,6 +24,7 @@
         <input id="damage-change_slider" type=range size=2em step=1 min=-1 max=100> %
         <input id="damage-change_number" type=number size=2em step=1 min=-1 max=100> %
     </div>
+    <div>Plotly static mode<input id="Plotly-static-mode" type=checkbox checked="checked"></div>
     <div id="chart-area"></div>
 </body>
 

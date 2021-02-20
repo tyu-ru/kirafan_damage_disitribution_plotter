@@ -39,7 +39,14 @@ function render() {
     // add_data(montecarlo, false);
     // add_data(convolution, true);
     add_data(fft_convolution, true);
-    Plotly.newPlot('chart-area', data);
+    let f = document.getElementById("Plotly-static-mode").checked;
+    let layout = {
+        title: 'Damage Dsitribution',
+        showlegend: false,
+        yaxis: { fixedrange: true },
+        xaxis: { fixedrange: true }
+    };
+    Plotly.newPlot('chart-area', data, layout);
 }
 
 function division_array_from_string(str) {
