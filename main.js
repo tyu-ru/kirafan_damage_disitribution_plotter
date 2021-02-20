@@ -1,4 +1,7 @@
 'use strict';
+
+document.write('<script src="fft.js"></script>');
+
 window.onload = () => {
     document.getElementById("damage-division").oninput = render;
     connect_slider_and_number("probability");
@@ -33,8 +36,9 @@ function render() {
             x: x, y: y.map(e => e * x_division), type: "line", name: fn.name, fill: fil ? 'tozeroy' : "none",
         });
     }
-    add_data(montecarlo, false);
-    add_data(convolution, true);
+    // add_data(montecarlo, false);
+    // add_data(convolution, true);
+    add_data(fft_convolution, true);
     Plotly.newPlot('chart-area', data);
 }
 
@@ -57,23 +61,27 @@ function montecarlo(x_division, max_coeffient, damage_division, critical_probabi
     return p.map(e => e / m);
 }
 
+function once_distribution(x_division, max_coeffient, damage, critical_probability, critical_coefficient) {
+    let p = Array(x_division * max_coeffient).fill(0);
+    for (let i = 0; i < x_division * max_coeffient; ++i) {
+        let x = i / x_division;
+        if (damage * 0.85 <= x && x < damage) {
+            p[i] += 1 / (damage * 0.15) * (1 - critical_probability) / x_division;
+        }
+        if (damage * 0.85 * critical_coefficient <= x && x < damage * critical_coefficient) {
+            p[i] += 1 / (damage * 0.15 * critical_coefficient) * critical_probability / x_division;
+        }
+    }
+
+    let s = p.reduce((s, x) => s + x);
+    return p.map(e => e / s);
+}
+
 function convolution(x_division, max_coeffient, damage_division, critical_probability, critical_coefficient) {
     let p = Array(x_division * max_coeffient).fill(0);
     p[0] = 1;
-    let p2 = Array(x_division * max_coeffient).fill(0);
     for (let damage of damage_division) {
-        p2 = p2.fill(0);
-        for (let i = 0; i < x_division * max_coeffient; ++i) {
-            let x = i / x_division;
-            if (damage * 0.85 <= x && x < damage) {
-                p2[i] += 1 / (damage * 0.15) * (1 - critical_probability) / x_division;
-            }
-            if (damage * 0.85 * critical_coefficient <= x && x < damage * critical_coefficient) {
-                p2[i] += 1 / (damage * 0.15 * critical_coefficient) * critical_probability / x_division;
-            }
-        }
-        let s = p2.reduce((s, x) => s + x);
-        p2 = p2.map(e => e / s);
+        let p2 = once_distribution(x_division, max_coeffient, damage, critical_probability, critical_coefficient);
 
         let p3 = Array(x_division * max_coeffient).fill(0);
         for (let i = 0; i < x_division * max_coeffient; ++i) {
@@ -85,4 +93,27 @@ function convolution(x_division, max_coeffient, damage_division, critical_probab
         p = p3;
     }
     return p;
+}
+
+function fft_convolution(x_division, max_coeffient, damage_division, critical_probability, critical_coefficient) {
+    const n = x_division * 4;
+    let prod_re = Array(n).fill(1);
+    let prod_im = Array(n).fill(0);
+    for (let damage of damage_division) {
+        let re = once_distribution(x_division, 4, damage, critical_probability, critical_coefficient);
+        let im = Array(n).fill(0);
+        FFT(re, im, n, false);
+        for (let i = 0; i < n; ++i) {
+            let pr = prod_re[i];
+            let pi = prod_im[i];
+            prod_re[i] = pr * re[i] - pi * im[i];
+            prod_im[i] = pr * im[i] + pi * re[i];
+        }
+    }
+    FFT(prod_re, prod_im, n, true);
+    let p = Array(n).fill(0);
+    for (let i = 0; i < n; ++i) {
+        p[i] = Math.sqrt(prod_re[i] * prod_re[i] + prod_im[i] * prod_im[i]);
+    }
+    return p.slice(0, x_division * max_coeffient);
 }
