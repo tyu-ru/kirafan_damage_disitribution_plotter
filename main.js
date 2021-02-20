@@ -3,7 +3,7 @@
 document.write('<script src="fft.js"></script>');
 
 window.onload = () => {
-    document.getElementById("damage-division").oninput = render;
+    document.getElementById("damage-division").oninput = solve;
     connect_slider_and_number("probability");
     connect_slider_and_number("damage-change");
 
@@ -22,14 +22,14 @@ window.onload = () => {
         pick_target = document.getElementById("damage-sample-max");
         render();
     };
-    render();
+    solve();
 };
 
 function connect_slider_and_number(id) {
     let slider = document.getElementById(id + "_slider");
     let number = document.getElementById(id + "_number")
-    slider.oninput = () => { number.value = slider.value; render(); };
-    number.oninput = () => { slider.value = number.value; render(); };
+    slider.oninput = () => { number.value = slider.value; solve(); };
+    number.oninput = () => { slider.value = number.value; solve(); };
 }
 
 function damage_sample_clamp() {
@@ -52,45 +52,59 @@ function register_pick_event() {
     });
 }
 
-function render() {
+function get_param() {
     const damage_division = division_array_from_string(document.getElementById("damage-division").value);
     const critical_probability = document.getElementById("probability_number").value / 100;
     const damage_change = document.getElementById("damage-change_number").value;
     const critical_coefficient = 1.5 * (1 + damage_change / 100);
-
     const max_coeffient = 3;
     const x_division = 1000;
     const data_len = x_division * max_coeffient;
-
     const damage_factor = document.getElementById("damage").value / document.getElementById("damage-type").value;
+    const damage_sample_min = document.getElementById("damage-sample-min").value;
+    const damage_sample_max = document.getElementById("damage-sample-max").value;
+    return {
+        damage_division,
+        critical_probability,
+        damage_change,
+        critical_coefficient,
+        max_coeffient,
+        x_division,
+        data_len,
+        damage_factor,
+        damage_sample_min,
+        damage_sample_max,
+    };
+}
 
-    let damage_sample_min = document.getElementById("damage-sample-min").value;
-    let damage_sample_max = document.getElementById("damage-sample-max").value;
+let distribution;
+let cumsum;
+function solve() {
+    const param = get_param();
 
+    cumsum = Array(param.data_len + 1).fill(0);
+    let st = performance.now();
+    distribution = fft_convolution(param.x_division, param.data_len, param.damage_division, param.critical_probability, param.critical_coefficient);
+    for (let i = 0; i < param.data_len; ++i) {
+        cumsum[i + 1] = cumsum[i] + distribution[i];
+    }
+    let en = performance.now();
+    console.log("fft_convolution:" + (en - st) + "ms");
+    render();
+}
+
+function render() {
+    const param = get_param();
     const static_mode = document.getElementById("Plotly-static-mode").checked;
 
-    let x = Array(data_len).fill().map((_, i) => i / x_division * damage_factor);
+    let x = Array(param.data_len).fill().map((_, i) => i / param.x_division * param.damage_factor);
     let data = [];
-    let cumsum = Array(data_len + 1).fill(0);
-    function add_data(fn, fil) {
-        let st = performance.now();
-        let y = fn(x_division, data_len, damage_division, critical_probability, critical_coefficient);
-        for (let i = 0; i < data_len; ++i) {
-            cumsum[i + 1] = cumsum[i] + y[i];
-        }
-        let en = performance.now();
-        console.log(fn.name + ":" + (en - st) + "ms");
-        data.push({
-            x: x,
-            y: y.map(e => e * x_division / damage_factor),
-            type: "line",
-            name: fn.name,
-            fill: fil ? 'tozeroy' : "none",
-        });
-    }
-    // add_data(montecarlo, false);
-    // add_data(convolution, true);
-    add_data(fft_convolution, true);
+    data.push({
+        x: x,
+        y: distribution.map(e => e * param.x_division / param.damage_factor),
+        type: "line",
+        fill: "tozeroy",
+    });
 
     let layout = {
         title: 'Damage Dsitribution',
@@ -99,16 +113,16 @@ function render() {
         xaxis: {
             title: "Probability Density",
             fixedrange: static_mode,
-            dtick: 0.1 * damage_factor,
-            range: [0, (critical_coefficient + 0.05) * damage_factor]
+            dtick: 0.1 * param.damage_factor,
+            range: [0, (param.critical_coefficient + 0.05) * param.damage_factor]
         },
         shapes: [
             {
                 type: "rect",
                 xref: "x",
                 yref: 'paper',
-                x0: damage_sample_min,
-                x1: damage_sample_max,
+                x0: param.damage_sample_min,
+                x1: param.damage_sample_max,
                 y0: 0,
                 y1: 1,
                 fillcolor: "#d3d3d3",
@@ -121,8 +135,8 @@ function render() {
                 type: "line",
                 xref: "x",
                 yref: "paper",
-                x0: damage_sample_min,
-                x1: damage_sample_min,
+                x0: param.damage_sample_min,
+                x1: param.damage_sample_min,
                 y0: 0,
                 y1: 1,
                 line: {
@@ -134,8 +148,8 @@ function render() {
                 type: "line",
                 xref: "x",
                 yref: "paper",
-                x0: damage_sample_max,
-                x1: damage_sample_max,
+                x0: param.damage_sample_max,
+                x1: param.damage_sample_max,
                 y0: 0,
                 y1: 1,
                 line: {
@@ -147,10 +161,10 @@ function render() {
     };
     Plotly.newPlot('chart-area', data, layout, { responsive: true });
 
-    let min_index = Math.min(Math.floor(damage_sample_min * x_division / damage_factor), len);
-    let max_index = Math.min(Math.floor(damage_sample_max * x_division / damage_factor), len);
-    let prob = cumsum[max_index] - cumsum[min_index];
-    document.getElementById("probability").textContent = Math.floor(prob * 1000) / 10;
+    let min_index = Math.min(Math.floor(param.damage_sample_min * param.x_division / param.damage_factor), param.data_len);
+    let max_index = Math.min(Math.floor(param.damage_sample_max * param.x_division / param.damage_factor), param.data_len);
+    let range_integral = cumsum[max_index] - cumsum[min_index];
+    document.getElementById("probability").textContent = Math.floor(range_integral * 1000) / 10;
     register_pick_event();
 }
 
@@ -160,8 +174,8 @@ function division_array_from_string(str) {
     return res.map(e => e / sum);
 }
 
-function montecarlo(x_division, len, damage_division, critical_probability, critical_coefficient) {
-    let p = Array(len).fill(0);
+function montecarlo(x_division, data_len, damage_division, critical_probability, critical_coefficient) {
+    let p = Array(data_len).fill(0);
     const m = 100_000;
     for (let i = 0; i < m; ++i) {
         let s = 0;
@@ -173,9 +187,9 @@ function montecarlo(x_division, len, damage_division, critical_probability, crit
     return p.map(e => e / m);
 }
 
-function once_distribution(x_division, len, damage, critical_probability, critical_coefficient) {
-    let p = Array(len).fill(0);
-    for (let i = 0; i < len; ++i) {
+function once_distribution(x_division, data_len, damage, critical_probability, critical_coefficient) {
+    let p = Array(data_len).fill(0);
+    for (let i = 0; i < data_len; ++i) {
         let x = i / x_division;
         if (damage * 0.85 <= x && x < damage) {
             p[i] += 1 / (damage * 0.15) * (1 - critical_probability) / x_division;
@@ -189,16 +203,16 @@ function once_distribution(x_division, len, damage, critical_probability, critic
     return p.map(e => e / s);
 }
 
-function convolution(x_division, len, damage_division, critical_probability, critical_coefficient) {
-    let p = Array(len).fill(0);
+function convolution(x_division, data_len, damage_division, critical_probability, critical_coefficient) {
+    let p = Array(data_len).fill(0);
     p[0] = 1;
     for (let damage of damage_division) {
-        let p2 = once_distribution(x_division, len, damage, critical_probability, critical_coefficient);
+        let p2 = once_distribution(x_division, data_len, damage, critical_probability, critical_coefficient);
 
-        let p3 = Array(len).fill(0);
-        for (let i = 0; i < len; ++i) {
-            for (let j = 0; j < len; ++j) {
-                if (i + j >= len) break;
+        let p3 = Array(data_len).fill(0);
+        for (let i = 0; i < data_len; ++i) {
+            for (let j = 0; j < data_len; ++j) {
+                if (i + j >= data_len) break;
                 p3[i + j] += p[i] * p2[j];
             }
         }
@@ -218,8 +232,8 @@ function next_power_of_two(x) {
     return x;
 }
 
-function fft_convolution(x_division, len, damage_division, critical_probability, critical_coefficient) {
-    const n = next_power_of_two(len);
+function fft_convolution(x_division, data_len, damage_division, critical_probability, critical_coefficient) {
+    const n = next_power_of_two(data_len);
     let prod_re = Array(n).fill(1);
     let prod_im = Array(n).fill(0);
     for (let damage of damage_division) {
@@ -238,5 +252,5 @@ function fft_convolution(x_division, len, damage_division, critical_probability,
     for (let i = 0; i < n; ++i) {
         p[i] = Math.sqrt(prod_re[i] * prod_re[i] + prod_im[i] * prod_im[i]);
     }
-    return p.slice(0, len);
+    return p.slice(0, data_len);
 }
