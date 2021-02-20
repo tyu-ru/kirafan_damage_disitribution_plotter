@@ -110,7 +110,7 @@ function render() {
     let layout = {
         title: 'Damage Dsitribution',
         showlegend: false,
-        yaxis: { title: "Damage", fixedrange: static_mode },
+        yaxis: { title: "Damage", fixedrange: true },
         xaxis: {
             title: "Probability Density",
             fixedrange: static_mode,
