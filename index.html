@@ -5,8 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-
+    <!-- Latest compiled and minified CSS -->
     <title>Damage Distribution Plotter</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+        integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="main.js"></script>
 </head>
@@ -15,30 +17,42 @@
     <noscript>Pls enable javascript</noscript>
     <div>
         Attack Division
-        <input id="damage-division" size=5em value="1 1 1 1 1">
+        <input id="damage-division" size=8em value="1 1 1 1 1">
+    </div>
+    <div>
         Critical Probability
-        <input id="probability_slider" type="range" step=1 min=0 max=100 value=20>
-        <input id="probability_number" type="number" size=2em step=1 min=0 max=100 value=20>%
+        <input id="probability_slider" type="hidden" step=1 min=0 max=100 value=20>
+        <input id="probability_number" type="number" size=4em step=1 min=0 max=100 value=20> %
+    </div>
+    <div>
         Critical Damage Change
-        <input id="damage-change_slider" type="range" size=2em step=1 min=-1 max=100 value=0>
-        <input id="damage-change_number" type="number" size=2em step=1 min=-1 max=100 value=0> %
+        <input id="damage-change_slider" type="hidden" step=1 min=-33 max=100 value=0>
+        <input id="damage-change_number" type="number" size=4em step=1 min=-33 max=100 value=0> %
+
     </div>
     <div>
         Damege
-        <input id="damage" type="number" size=5em min=1 value=10000>
+        <input id="damage" type="number" size=8em min=1 value=10000>
         <select id="damage-type">
             <option value=1>maximum</option>
             <option value=0.925>expected</option>
         </select>
+    </div>
+    <div>
         Damage sample
-        <input id="damage-sample-min" type="number" size=5em min=1 step=any value=10000>
+        <input id="damage-sample-min" type="number" size=8em min=1 step=any value=10000>
         <button id="damage-sample-min-pick" type="button">pick</button>
         ~
-        <input id="damage-sample-max" type="number" size=5em min=1 step=any value=15000>
+        <input id="damage-sample-max" type="number" size=8em min=1 step=any value=15000>
         <button id="damage-sample-max-pick" type="button">pick</button>
-        <span id="probability"></span>%
     </div>
-    <div>Plotly static mode<input id="Plotly-static-mode" type=checkbox checked="checked"></div>
+    <div>
+        Probability = <span id="probability"></span>%
+    </div>
+    <div>
+        Plotly static mode
+        <input id="Plotly-static-mode" type=checkbox checked="checked">
+    </div>
     <div id="chart-area"></div>
 </body>
 
