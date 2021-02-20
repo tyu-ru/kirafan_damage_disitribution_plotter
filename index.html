@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <noscript>Pls enable to javascript</noscript>
+    <noscript>Pls enable javascript</noscript>
     <div>
         Attack Division
         <input id="damage-division" size=5em>
@@ -23,6 +23,14 @@
         Critical Damage Change
         <input id="damage-change_slider" type=range size=2em step=1 min=-1 max=100> %
         <input id="damage-change_number" type=number size=2em step=1 min=-1 max=100> %
+    </div>
+    <div>
+        Damege
+        <input id="damage" type=number size=5em min=1>
+        <select id="damage-type">
+            <option value=1>maximum</option>
+            <option value=0.925>expected</option>
+        </select>
     </div>
     <div>Plotly static mode<input id="Plotly-static-mode" type=checkbox checked="checked"></div>
     <div id="chart-area"></div>

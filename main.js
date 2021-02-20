@@ -25,7 +25,9 @@ function render() {
     const max_coeffient = 3;
     const x_division = 1024;
 
-    let x = Array(x_division * max_coeffient).fill().map((_, i) => i / x_division);
+    const damage_factor = document.getElementById("damage").value / document.getElementById("damage-type").value;
+
+    let x = Array(x_division * max_coeffient).fill().map((_, i) => i / x_division * damage_factor);
     let data = [];
     function add_data(fn, fil) {
         let st = performance.now();
@@ -33,7 +35,11 @@ function render() {
         let en = performance.now();
         console.log(fn.name + ":" + (en - st) + "ms");
         data.push({
-            x: x, y: y.map(e => e * x_division), type: "line", name: fn.name, fill: fil ? 'tozeroy' : "none",
+            x: x,
+            y: y.map(e => e * x_division / damage_factor),
+            type: "line",
+            name: fn.name,
+            fill: fil ? 'tozeroy' : "none",
         });
     }
     // add_data(montecarlo, false);
@@ -44,7 +50,12 @@ function render() {
         title: 'Damage Dsitribution',
         showlegend: false,
         yaxis: { title: "Damage", fixedrange: f },
-        xaxis: { title: "Probability Density", fixedrange: f, dtick: 0.1, range: [0, critical_coefficient + 0.05] }
+        xaxis: {
+            title: "Probability Density",
+            fixedrange: f,
+            dtick: 0.1 * damage_factor,
+            range: [0, (critical_coefficient + 0.05) * damage_factor]
+        }
     };
     Plotly.newPlot('chart-area', data, layout);
 }
