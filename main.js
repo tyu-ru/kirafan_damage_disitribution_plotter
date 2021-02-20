@@ -43,8 +43,8 @@ function render() {
     let layout = {
         title: 'Damage Dsitribution',
         showlegend: false,
-        yaxis: { fixedrange: true },
-        xaxis: { fixedrange: true }
+        yaxis: { title: "Damage", fixedrange: f },
+        xaxis: { title: "Probability Density", fixedrange: f, dtick: 0.1, range: [0, critical_coefficient + 0.05] }
     };
     Plotly.newPlot('chart-area', data, layout);
 }
