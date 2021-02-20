@@ -12,8 +12,6 @@ window.onload = () => {
     document.getElementById("damage").oninput = damage_sample_clamp;
     document.getElementById("damage-type").onchange = damage_sample_clamp;
 
-    document.getElementById("Plotly-static-mode").onchange = render;
-
     document.getElementById("damage-sample-min-pick").onclick = () => {
         pick_target = document.getElementById("damage-sample-min");
         render();
@@ -22,7 +20,12 @@ window.onload = () => {
         pick_target = document.getElementById("damage-sample-max");
         render();
     };
+    document.getElementById("fixed-range").onchange = render;
+    document.getElementById("auto-scale-x-min").onchange = render;
+
     solve();
+
+    set_description();
 };
 
 function connect_slider_and_number(id) {
@@ -95,7 +98,8 @@ function solve() {
 
 function render() {
     const param = get_param();
-    const static_mode = document.getElementById("Plotly-static-mode").checked;
+    const auto_scale_x_min = document.getElementById("auto-scale-x-min").checked;
+    const fixed_range = document.getElementById("fixed-range").checked;
 
     let x = Array(param.data_len).fill().map((_, i) => i / param.x_division * param.damage_factor);
     let data = [];
@@ -113,9 +117,9 @@ function render() {
         yaxis: { title: "Damage", fixedrange: true },
         xaxis: {
             title: "Probability Density",
-            fixedrange: static_mode,
+            fixedrange: fixed_range,
             dtick: 0.1 * param.damage_factor,
-            range: [0, (param.critical_coefficient + 0.05) * param.damage_factor]
+            range: [auto_scale_x_min ? param.damage_factor * 0.8 : 0, (param.critical_coefficient + 0.05) * param.damage_factor]
         },
         shapes: [
             {
@@ -254,4 +258,91 @@ function fft_convolution(x_division, data_len, damage_division, critical_probabi
         p[i] = Math.sqrt(prod_re[i] * prod_re[i] + prod_im[i] * prod_im[i]);
     }
     return p.slice(0, data_len);
+}
+
+
+function set_description() {
+    let markdown = (function () {/*
+
+# Description
+
+攻撃時のダメージの分布を調べるためのツールです。
+
+ほぼ自分用なところがあるので、細かい調整はしてません。
+
+[解析wiki](https://wiki.kirafan.moe/)と[きらファン計算機](https://calc.kirafan.moe/#/home)との併用前提なところがあります
+
+出力されるグラフは確率密度分布です。縦軸の具体的な値は気にしないでください。(一応`/damage`単位の数値になってる...はず)
+
+計算方法の都合上ある程度誤差があります。
+
+## Attack Division
+
+攻撃の段数と威力分布を示す数列です。
+解析wikiに記載されてます。
+
+例として
+
+- 星5青葉(風魔) とっておき
+  - `1 1 1 1 1`
+- 星5千矢(火盾) クラススキル1
+  - `3 3 3 3 8`
+- 星5千矢(風魔) とっておき
+  - `1 1`
+
+などです。区切り文字は空白でも`:`でもなんでもおｋです。
+
+## Critical Probability
+
+クリティカル確率です。
+
+## Critical Damage Change
+
+クリティカルダメージ量の変化です。
+
+最大200%最小-33%です。
+
+参考までに、
+
+- ゆの専用武器 +33%
+- かおす先生専用武器 +17%
+- サンリオアリス/冠 +16.3%
+- ごちうさ/きらファンオーブ +17%
+
+## Damage
+
+**非クリティカル時**のダメージを入力してください
+
+隣の選択boxの内容は次のとおりです
+
+- maximum
+  - 入力値がダメージの非クリティカル時の最大値
+- expect
+  - 入力値がダメージの非クリティカル時の期待値
+
+## Damage Sample
+
+グラフの積分用の設定値です。
+
+グラフ上にある赤い枠の両端を設定します。この範囲の確率を計算できます。
+
+`pick`ボタンを推してからグラフ上をクリックするとその地点のx座標が選択されます。
+
+選択範囲の積分値が`Probability = xx %`として入力欄の下に表示されます。
+
+## その他設定
+
+- auto scale x min
+  - チェックが入っているとグラフのx軸範囲の下限を自動調整します。
+  - オフでグラフ原点を表示範囲に含むようになります(デフォルト)
+- fixed-range
+  - チェックが入っているとグラフの表示範囲が固定されます(デフォルト)
+  - オフの時は拡大とかできます。
+
+## Author
+
+ちゅーる [@tyuru_kirafan](https://twitter.com/tyuru_kirafan)
+
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+    document.getElementById("description").innerHTML = marked(markdown);
 }

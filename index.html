@@ -5,16 +5,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <!-- Latest compiled and minified CSS -->
     <title>Damage Distribution Plotter</title>
+    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
         integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="main.js"></script>
 </head>
 
 <body>
     <noscript>Pls enable javascript</noscript>
+    <p style="font-weight: bold;">説明はページ下部に</p>
     <div>
         Attack Division
         <input id="damage-division" size=8em value="1 1 1 1 1">
@@ -46,14 +48,19 @@
         <input id="damage-sample-max" type="number" size=8em min=1 step=any value=15000>
         <button id="damage-sample-max-pick" type="button">pick</button>
     </div>
-    <div>
+    <div style="font-weight: bold;">
         Probability = <span id="probability"></span>%
     </div>
     <div>
-        Plotly static mode
-        <input id="Plotly-static-mode" type=checkbox checked="checked">
+        auto scale x min
+        <input id="auto-scale-x-min" type=checkbox>
+    </div>
+    <div>
+        fixed range
+        <input id="fixed-range" type=checkbox checked="checked">
     </div>
     <div id="chart-area"></div>
+    <div id="description"></div>
 </body>
 
 </html>
