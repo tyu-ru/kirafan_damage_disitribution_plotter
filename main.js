@@ -114,9 +114,9 @@ function render() {
     let layout = {
         title: 'Damage Dsitribution',
         showlegend: false,
-        yaxis: { title: "Damage", fixedrange: true },
+        yaxis: { title: "Probability Density [/ damage]", fixedrange: true },
         xaxis: {
-            title: "Probability Density",
+            title: "Damage",
             fixedrange: fixed_range,
             dtick: 0.1 * param.damage_factor,
             range: [auto_scale_x_min ? param.damage_factor * 0.8 : 0, (param.critical_coefficient + 0.05) * param.damage_factor]
@@ -275,6 +275,8 @@ function set_description() {
 出力されるグラフは確率密度分布です。縦軸の具体的な値は気にしないでください。(一応`/damage`単位の数値になってる...はず)
 
 計算方法の都合上ある程度誤差があります。
+
+~~htmlもjsも初めてだから低クオリティは許して~~
 
 ## Attack Division
 
