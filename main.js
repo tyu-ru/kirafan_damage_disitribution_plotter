@@ -24,7 +24,6 @@ window.onload = () => {
     document.getElementById("auto-scale-x-min").onchange = render;
 
     solve();
-
     set_description();
 };
 
@@ -101,11 +100,13 @@ function render() {
     const auto_scale_x_min = document.getElementById("auto-scale-x-min").checked;
     const fixed_range = document.getElementById("fixed-range").checked;
 
-    let x = Array(param.data_len).fill().map((_, i) => i / param.x_division * param.damage_factor);
+    const damage_par_index = param.damage_factor / param.x_division;
+
+    let x = Array(param.data_len).fill().map((_, i) => i * damage_par_index);
     let data = [];
     data.push({
         x: x,
-        y: distribution.map(e => e * param.x_division / param.damage_factor),
+        y: distribution.map(e => e / damage_par_index),
         type: "line",
         name: "fft_convolution",
         fill: "tozeroy",
@@ -119,7 +120,10 @@ function render() {
             title: "Damage",
             fixedrange: fixed_range,
             dtick: 0.1 * param.damage_factor,
-            range: [auto_scale_x_min ? param.damage_factor * 0.8 : 0, (param.critical_coefficient + 0.05) * param.damage_factor]
+            range: [
+                auto_scale_x_min ? param.damage_factor * 0.8 : 0,
+                (param.critical_coefficient + 0.05) * param.damage_factor
+            ]
         },
         shapes: [
             {
@@ -166,8 +170,8 @@ function render() {
     };
     Plotly.newPlot('chart-area', data, layout, { responsive: true });
 
-    let min_index = Math.min(Math.floor(param.damage_sample_min * param.x_division / param.damage_factor), param.data_len);
-    let max_index = Math.min(Math.floor(param.damage_sample_max * param.x_division / param.damage_factor), param.data_len);
+    let min_index = Math.min(Math.round(param.damage_sample_min / damage_par_index), param.data_len);
+    let max_index = Math.min(Math.round(param.damage_sample_max / damage_par_index), param.data_len);
     let range_integral = cumsum[max_index] - cumsum[min_index];
     document.getElementById("probability").textContent = Math.floor(range_integral * 1000) / 10;
     register_pick_event();
