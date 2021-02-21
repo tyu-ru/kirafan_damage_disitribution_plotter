@@ -1,24 +1,34 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="ja">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="icon" href="./favicon.png">
-    <title>Damage Distribution Plotter</title>
+    <title>Kirafan Damage Distribution Plotter</title>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
         integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="main.js"></script>
+
+    <style>
+        body {
+            padding: 10px
+        }
+    </style>
 </head>
+
+<header>
+    <h1>Kirafan Damage Distribution Plotter</h1>
+    <p style="font-weight: bold;">説明はページ下部にあります</p>
+</header>
 
 <body>
     <noscript>Pls enable javascript</noscript>
-    <p style="font-weight: bold;">説明はページ下部に</p>
     <div>
         Attack Division
         <input id="damage-division" size="8em" value="1 1 1 1 1">
@@ -32,7 +42,6 @@
         Critical Damage Change
         <input id="damage-change_slider" type="hidden" step="1" min="-33" max="100" value="0">
         <input id="damage-change_number" type="number" size="4em" step="1" min="-33" max="100" value="0"> %
-
     </div>
     <div>
         Damege
