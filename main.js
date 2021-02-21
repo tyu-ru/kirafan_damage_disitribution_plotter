@@ -284,7 +284,7 @@ function set_description() {
 
 ## Attack Division
 
-攻撃の段数と威力分布を示す数列です。
+攻撃の段数と威力分布を示す整数列です。
 解析wikiに記載されてます。
 
 例として
