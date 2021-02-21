@@ -62,7 +62,16 @@ function get_param() {
     const max_coeffient = 3;
     const x_division = 1000;
     const data_len = x_division * max_coeffient;
-    const damage_factor = document.getElementById("damage").value / document.getElementById("damage-type").value;
+
+    let factor = 0;
+    switch (document.getElementById("damage-type").value) {
+        case "cri-ex": factor = 0.925 * critical_coefficient; break;
+        case "cri-mx": factor = critical_coefficient; break;
+        case "nocri-ex": factor = 0.925; break;
+        case "nocri-mx": factor = 1; break;
+    }
+
+    const damage_factor = document.getElementById("damage").value / factor;
     const damage_sample_min = document.getElementById("damage-sample-min").value;
     const damage_sample_max = document.getElementById("damage-sample-max").value;
     return {
@@ -306,7 +315,7 @@ function set_description() {
 
 クリティカルダメージ量の変化です。
 
-最大200%最小-33%です。
+最大100%最小-33%です。
 
 参考までに、
 
@@ -317,13 +326,17 @@ function set_description() {
 
 ## Damage
 
-**非クリティカル時**のダメージを入力してください
+ダメージの期待値もしくは最大値を入力してください
 
-隣の選択boxの内容は次のとおりです
+入力した値に応じて隣のboxの中身を選んでください
 
-- expect
-  - 入力値が非クリティカル時の期待値(きらファン計算機ででかでかと表示される値です)
-- maximum
+- expect(critical)
+  - 入力値がクリティカル時の期待値(きらファン計算機ででかでかと表示される値です)
+- maximum(critical)
+  - 入力値がクリティカル時の最大値
+- expect(not critical)
+  - 入力値が非クリティカル時の期待値
+- maximum(not critical)
   - 入力値が非クリティカル時の最大値
 
 ## Damage Sample
