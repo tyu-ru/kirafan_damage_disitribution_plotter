@@ -21,33 +21,33 @@
     <p style="font-weight: bold;">説明はページ下部に</p>
     <div>
         Attack Division
-        <input id="damage-division" size=8em value="1 1 1 1 1">
+        <input id="damage-division" size="8em" value="1 1 1 1 1">
     </div>
     <div>
         Critical Probability
-        <input id="probability_slider" type="hidden" step=1 min=0 max=100 value=20>
-        <input id="probability_number" type="number" size=4em step=1 min=0 max=100 value=20> %
+        <input id="probability_slider" type="hidden" step="1" min="0" max="100" value="20">
+        <input id="probability_number" type="number" size="4em" step="1" min="0" max="100" value="20"> %
     </div>
     <div>
         Critical Damage Change
-        <input id="damage-change_slider" type="hidden" step=1 min=-33 max=100 value=0>
-        <input id="damage-change_number" type="number" size=4em step=1 min=-33 max=100 value=0> %
+        <input id="damage-change_slider" type="hidden" step="1" min="-33" max="100" value="0">
+        <input id="damage-change_number" type="number" size="4em" step="1" min="-33" max="100" value="0"> %
 
     </div>
     <div>
         Damege
-        <input id="damage" type="number" size=8em min=1 value=10000>
+        <input id="damage" type="number" size="8em" min="1" value="10000">
         <select id="damage-type">
-            <option value=0.925>expected</option>
-            <option value=1>maximum</option>
+            <option value="0.925">expected</option>
+            <option value="1">maximum</option>
         </select>
     </div>
     <div>
         Damage sample
-        <input id="damage-sample-min" type="number" size=8em min=1 step=any value=10000>
+        <input id="damage-sample-min" type="number" size="8em" min="1" step="any" value="10000">
         <button id="damage-sample-min-pick" type="button">pick</button>
         ~
-        <input id="damage-sample-max" type="number" size=8em min=1 step=any value=15000>
+        <input id="damage-sample-max" type="number" size="8em" min="1" step="any" value="15000">
         <button id="damage-sample-max-pick" type="button">pick</button>
     </div>
     <div style="font-weight: bold;">
@@ -55,11 +55,11 @@
     </div>
     <div>
         auto scale x min
-        <input id="auto-scale-x-min" type=checkbox>
+        <input id="auto-scale-x-min" type="checkbox">
     </div>
     <div>
         fixed range
-        <input id="fixed-range" type=checkbox checked="checked">
+        <input id="fixed-range" type="checkbox" checked="checked">
     </div>
     <div id="chart-area"></div>
     <div id="description"></div>
