@@ -123,8 +123,12 @@ function render() {
 
     let layout = {
         title: 'Damage Dsitribution',
-        showlegend: false,
-        yaxis: { title: "Probability Density [/ damage]", fixedrange: true },
+        // showlegend: false,
+        yaxis: {
+            ticklabelposition: "inside",
+            title: "Probability Density [/ damage]",
+            fixedrange: true
+        },
         xaxis: {
             title: "Damage",
             fixedrange: fixed_range,
@@ -133,6 +137,12 @@ function render() {
                 auto_scale_x_min ? param.damage_factor * 0.8 : 0,
                 (param.critical_coefficient + 0.05) * param.damage_factor
             ]
+        },
+        // // autosize: true,
+        margin: {
+            l: 30,
+            r: 10,
+            pad: 0,
         },
         shapes: [
             {
@@ -356,7 +366,8 @@ function set_description() {
   - オフでグラフ原点を表示範囲に含むようになります(デフォルト)
 - fixed-range
   - チェックが入っているとグラフの表示範囲が固定されます(デフォルト)
-  - オフの時は拡大とかできます。
+  - オフの時は拡大とか移動とかできます。
+  - グラフのy軸方向の拡大、移動はできないようにしてます
 
 ## Author
 
