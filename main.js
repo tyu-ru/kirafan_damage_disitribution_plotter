@@ -190,7 +190,7 @@ function render() {
     let min_index = Math.min(Math.round(param.damage_sample_min / damage_par_index), param.data_len);
     let max_index = Math.min(Math.round(param.damage_sample_max / damage_par_index), param.data_len);
     let range_integral = cumsum[max_index] - cumsum[min_index];
-    document.getElementById("probability").textContent = Math.floor(range_integral * 1000) / 10;
+    document.getElementById("probability").textContent = Math.round(range_integral * 1000) / 10;
     register_pick_event();
 }
 
