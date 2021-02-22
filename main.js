@@ -14,11 +14,9 @@ window.onload = () => {
 
     document.getElementById("damage-sample-min-pick").onclick = () => {
         pick_target = document.getElementById("damage-sample-min");
-        render();
     };
     document.getElementById("damage-sample-max-pick").onclick = () => {
         pick_target = document.getElementById("damage-sample-max");
-        render();
     };
     document.getElementById("fixed-range").onchange = render;
     document.getElementById("auto-scale-x-min").onchange = render;
