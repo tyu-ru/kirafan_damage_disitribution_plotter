@@ -3,13 +3,18 @@
     <h1>Kirafan Damage Distribution Plotter</h1>
     <p>Recomended: PC or Tablet.</p>
     <p>Instructions are at bottom of the page.</p>
+    <Description></Description>
   </div>
 </template>
 
 <script>
+import Description from "./components/Description.vue";
+
 export default {
   name: "App",
-  components: {},
+  components: {
+    Description,
+  },
 };
 </script>
 
