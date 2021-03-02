@@ -9,14 +9,14 @@
 </template>
 
 <script>
-import Description from "./components/Description.vue";
 import Plot from "./components/Plot.vue";
+import Description from "./components/Description.vue";
 
 export default {
   name: "App",
   components: {
-    Description,
     Plot,
+    Description,
   },
 };
 </script>

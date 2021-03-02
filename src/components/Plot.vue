@@ -1,23 +1,20 @@
 <template>
   <div id="Plot">
-    <Plotly :data="data" :layout="layout" :display-mode-bar="false"></Plotly>
+    <div id="canvas"></div>
   </div>
 </template>
 
 <script>
-import { Plotly } from "vue-plotly";
+import Plotly from "plotly.js-dist";
 
 export default {
   name: "Plot",
-  components: {
-    Plotly,
-  },
-  data() {
+  mounted: function () {
     let x = Array(100);
     let y = Array(100);
     for (let i = 0; i < 100; ++i) {
       x[i] = i / 10;
-      y[i] = Math.sin(i / 10);
+      y[i] = Math.sin(i / 10) + 2;
     }
     let data = [];
     data.push({
@@ -25,10 +22,25 @@ export default {
       y,
       type: "line",
     });
-    return { data, layout: { title: "aaa" } };
-  },
-  mounted: function () {
-    // Plotly.newPlot(this.$el, data, {}, { responsive: true });
+    let layout = {
+      title: "Damage Dsitribution",
+      xaxis: {
+        title: "Damege",
+        // fixedrange: true,
+        // range: [0, 3],
+      },
+      yaxis: {
+        ticklabelposition: "inside",
+        title: "Probability Density [/ damage]",
+        fixedrange: true,
+      },
+      margin: {
+        l: 30,
+        r: 10,
+        pad: 0,
+      },
+    };
+    Plotly.newPlot("canvas", data, layout, { responsive: true });
   },
 };
 </script>
