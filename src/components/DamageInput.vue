@@ -1,0 +1,81 @@
+<template>
+  <div id="DamageInput">
+    <DamageDivisionInput v-model="division"></DamageDivisionInput>
+    <input type="number" v-model.number="damage" min="0" />
+    <select v-model="damagetype">
+      <option v-bind:value="0">Expected(critical)</option>
+      <option v-bind:value="1">Maximum(critical)</option>
+      <option v-bind:value="2">Expected(not-critical)</option>
+      <option v-bind:value="3">Maximum(not-critical)</option>
+    </select>
+    <input type="number" v-model.number="prob" min="0" max="100" />
+    <input type="number" v-model.number="damagechange" min="-33" max="100" />
+    <p>{{ division }}</p>
+  </div>
+</template>
+
+<script>
+import DamageDivisionInput from "./DamageDivisionInput.vue";
+export default {
+  components: { DamageDivisionInput },
+  name: "DamageInput",
+  data() {
+    return {
+      division: [1, 1, 1, 1, 1],
+      damage: 1000,
+      damagetype: 0,
+      prob: 20,
+      damagechange: 0,
+    };
+  },
+  watch: {
+    division: function () {
+      this.emit();
+    },
+    damage: function () {
+      this.emit();
+    },
+    damagetype: function () {
+      this.emit();
+    },
+    prob: function () {
+      this.emit();
+    },
+    damagechange: function () {
+      this.emit();
+    },
+  },
+  methods: {
+    emit: function () {
+      const critical_cofficient = 1.5 * (1 + this.damagechange / 100);
+      let mxdamage = this.damage;
+      switch (this.damagetype) {
+        case 0:
+          mxdamage /= 0.925 * critical_cofficient;
+          break;
+        case 1:
+          mxdamage /= 1 * critical_cofficient;
+          break;
+        case 2:
+          mxdamage /= 0.925;
+          break;
+        case 3:
+          mxdamage /= 1;
+          break;
+        default:
+          alert("internal error : DamageType Unexpect");
+          break;
+      }
+      this.$emit("input", {
+        division: this.division,
+        mxdamage,
+        prob: this.prob / 100,
+        critical_cofficient,
+      });
+    },
+  },
+};
+</script>
+
+<style scoped>
+</style>
