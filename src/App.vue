@@ -50,7 +50,7 @@ import DamageInput from "./components/DamageInput.vue";
 import Plot from "./components/Plot.vue";
 import Description from "./components/Description.vue";
 
-import { fft_convolution2 } from "./logic.js";
+import { fft_convolution } from "./logic.js";
 
 const x_division = 1000;
 
@@ -104,7 +104,7 @@ export default {
           .fill()
           .map((_, i) => i * this.damage_par_index());
 
-        let y = fft_convolution2(
+        let y = fft_convolution(
           x_division,
           data_len,
           this.inputdata.map((input) => {

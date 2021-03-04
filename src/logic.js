@@ -1,18 +1,21 @@
 
 function once_distribution(x_division, data_len, damage, critical_probability, critical_coefficient) {
     let p = Array(data_len).fill(0);
+    let f = false;
     for (let i = 0; i < data_len; ++i) {
         let x = i / x_division;
         if (damage * 0.85 <= x && x < damage) {
             p[i] += 1 / (damage * 0.15) * (1 - critical_probability) / x_division;
+            f = true;
         }
         if (damage * 0.85 * critical_coefficient <= x && x < damage * critical_coefficient) {
             p[i] += 1 / (damage * 0.15 * critical_coefficient) * critical_probability / x_division;
+            f = true;
         }
     }
 
     let s = p.reduce((s, x) => s + x);
-    return p.map(e => e / s);
+    return { p: p.map(e => e / s), f };
 }
 
 function next_power_of_two(x) {
@@ -26,42 +29,20 @@ function next_power_of_two(x) {
     return x;
 }
 
-export function fft_convolution(x_division, data_len, damage_division, critical_probability, critical_coefficient) {
-    const n = next_power_of_two(data_len);
-    let prod_re = Array(n).fill(1);
-    let prod_im = Array(n).fill(0);
-    for (let damage of damage_division) {
-        let re = once_distribution(x_division, n, damage, critical_probability, critical_coefficient);
-        let im = Array(n).fill(0);
-        FFT(re, im, n, false);
-        for (let i = 0; i < n; ++i) {
-            let pr = prod_re[i];
-            let pi = prod_im[i];
-            prod_re[i] = pr * re[i] - pi * im[i];
-            prod_im[i] = pr * im[i] + pi * re[i];
-        }
-    }
-    FFT(prod_re, prod_im, n, true);
-    let p = Array(n).fill(0);
-    for (let i = 0; i < n; ++i) {
-        p[i] = Math.sqrt(prod_re[i] * prod_re[i] + prod_im[i] * prod_im[i]);
-    }
-    return p.slice(0, data_len);
-}
-
-export function fft_convolution2(x_division, data_len, dat) {
+export function fft_convolution(x_division, data_len, dat) {
     const n = next_power_of_two(data_len);
     let prod_re = Array(n).fill(1);
     let prod_im = Array(n).fill(0);
     let damage_sum = dat.reduce((s, x) => s + x.mxdamage, 0);
     for (let damage_pack of dat) {
         for (let damage of damage_pack.division) {
-            let re = once_distribution(
+            let { p: re, f } = once_distribution(
                 x_division, n,
                 damage * damage_pack.mxdamage / damage_sum,
                 damage_pack.critical_probability,
                 damage_pack.critical_coefficient
             );
+            if (!f) continue;
 
             let im = Array(n).fill(0);
             FFT(re, im, n, false);
