@@ -1,17 +1,27 @@
 <template>
-  <div id="DamageInput">
-    <DamageDivisionInput v-model="division"></DamageDivisionInput>
-    <input type="number" v-model.number="damage" min="0" />
-    <select v-model="damagetype">
-      <option v-bind:value="0">Expected(critical)</option>
-      <option v-bind:value="1">Maximum(critical)</option>
-      <option v-bind:value="2">Expected(not-critical)</option>
-      <option v-bind:value="3">Maximum(not-critical)</option>
-    </select>
-    <input type="number" v-model.number="prob" min="0" max="100" />
-    <input type="number" v-model.number="damagechange" min="-33" max="100" />
-    <p>{{ division }}</p>
-  </div>
+  <tr id="DamageInput">
+    <td>
+      <DamageDivisionInput v-model="division"></DamageDivisionInput>
+    </td>
+    <td>
+      <input type="number" v-model.number="damage" min="0" />
+    </td>
+    <td>
+      <select v-model="damagetype">
+        <option v-bind:value="0">Expected(critical)</option>
+        <option v-bind:value="1">Maximum(critical)</option>
+        <option v-bind:value="2">Expected(not-critical)</option>
+        <option v-bind:value="3">Maximum(not-critical)</option>
+      </select>
+    </td>
+
+    <td>
+      <input type="number" v-model.number="prob" min="0" max="100" />
+    </td>
+    <td>
+      <input type="number" v-model.number="damagechange" min="-33" max="100" />
+    </td>
+  </tr>
 </template>
 
 <script>
@@ -47,14 +57,14 @@ export default {
   },
   methods: {
     emit: function () {
-      const critical_cofficient = 1.5 * (1 + this.damagechange / 100);
+      const critical_coefficient = 1.5 * (1 + this.damagechange / 100);
       let mxdamage = this.damage;
       switch (this.damagetype) {
         case 0:
-          mxdamage /= 0.925 * critical_cofficient;
+          mxdamage /= 0.925 * critical_coefficient;
           break;
         case 1:
-          mxdamage /= 1 * critical_cofficient;
+          mxdamage /= 1 * critical_coefficient;
           break;
         case 2:
           mxdamage /= 0.925;
@@ -70,7 +80,7 @@ export default {
         division: this.division,
         mxdamage,
         prob: this.prob / 100,
-        critical_cofficient,
+        critical_coefficient,
       });
     },
   },
