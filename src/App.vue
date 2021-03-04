@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <h1>Kirafan Damage Distribution Plotter</h1>
-    <p>Recomended: PC or Tablet.</p>
-    <p>Instructions are at bottom of the page.</p>
+    <p>PCかタブレット端末推奨です</p>
+    <p>説明はページ下部にあります</p>
 
     <table>
       <tr>
